@@ -185,22 +185,25 @@ namespace BarcodeAddIn
             encodingOptions = new EncodingOptions { Height = picEncodedBarCode.Height, Width = picEncodedBarCode.Width, PureBarcode = true };
             string barcodeFormat = "DATA_MATRIX";
 
-            try
+            if (File.Exists(appFileName))
             {
-                using (TextReader textReader = File.OpenText(appFileName))
+                try
                 {
-                    BarcodeSetting bc = new BarcodeSetting();
-                    System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(typeof(BarcodeSetting));
-                    bc = (BarcodeSetting)x.Deserialize(textReader);
-                    encodingOptions.Height = bc.Height;
-                    encodingOptions.Width = bc.Width;
-                    barcodeFormat = bc.Type;                    
-                    txtContent.Text = bc.Text;
+                    using (TextReader textReader = File.OpenText(appFileName))
+                    {
+                        BarcodeSetting bc = new BarcodeSetting();
+                        System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(typeof(BarcodeSetting));
+                        bc = (BarcodeSetting)x.Deserialize(textReader);
+                        encodingOptions.Height = bc.Height;
+                        encodingOptions.Width = bc.Width;
+                        barcodeFormat = bc.Type;
+                        txtContent.Text = bc.Text;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "Cannot start Barcode plugin:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);                
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Cannot start Barcode plugin:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
             cmbEncoderType.SelectedItem = Enum.Parse(typeof(BarcodeFormat), barcodeFormat);
